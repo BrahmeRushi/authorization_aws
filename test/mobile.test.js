@@ -31,12 +31,19 @@ describe("Android checkout payment", () => {
   });
 
   it("opens only upi://pay links in the official Google Pay and PhonePe packages", () => {
-    const source = readFileSync(
+    const activity = readFileSync(
       new URL("../android/app/src/main/java/com/authorizationaws/upi/MainActivity.java", import.meta.url),
       "utf8",
     );
-    assert.ok(source.includes(GOOGLE_PAY_PACKAGE));
-    assert.ok(source.includes(PHONEPE_PACKAGE));
-    assert.match(source, /url\.startsWith\("upi:\/\/pay\?"\)/);
+    const request = readFileSync(
+      new URL("../android/app/src/main/java/com/authorizationaws/upi/UpiRequest.java", import.meta.url),
+      "utf8",
+    );
+    assert.ok(activity.includes("UpiRequest.GOOGLE_PAY"));
+    assert.ok(activity.includes("UpiRequest.PHONEPE"));
+    assert.ok(activity.includes('url.startsWith("upi://pay?")'));
+    assert.ok(request.includes(GOOGLE_PAY_PACKAGE));
+    assert.ok(request.includes(PHONEPE_PACKAGE));
+    assert.ok(request.includes('new StringBuilder("upi://pay?")'));
   });
 });

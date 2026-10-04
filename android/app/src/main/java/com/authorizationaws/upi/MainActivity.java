@@ -1,75 +1,101 @@
 package com.authorizationaws.upi;
 
-import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.webkit.JavascriptInterface;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.widget.Toast;
+import android.widget.EditText;
+import android.widget.TextView;
 
-import androidx.webkit.WebViewAssetLoader;
+import androidx.activity.ComponentActivity;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 
-public class MainActivity extends Activity {
-    private static final String GOOGLE_PAY = "com.google.android.apps.nbu.paisa.user";
-    private static final String PHONEPE = "com.phonepe.app";
+import java.security.SecureRandom;
+
+public class MainActivity extends ComponentActivity {
+    private ActivityResultLauncher<Intent> paymentLauncher;
+    private EditText amountView;
+    private EditText noteView;
+    private EditText nameView;
+    private EditText vpaView;
+    private TextView statusView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        WebView webView = new WebView(this);
-        setContentView(webView);
-
-        WebSettings settings = webView.getSettings();
-        settings.setJavaScriptEnabled(true);
-        settings.setDomStorageEnabled(true);
-        settings.setAllowFileAccess(false);
-
-        WebViewAssetLoader assetLoader = new WebViewAssetLoader.Builder()
-                .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
-                .build();
-
-        webView.setWebViewClient(new android.webkit.WebViewClient() {
-            @Override
-            public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-                return assetLoader.shouldInterceptRequest(request.getUrl());
-            }
-        });
-        webView.addJavascriptInterface(new UpiBridge(), "UpiAndroid");
-        webView.loadUrl("https://appassets.androidplatform.net/assets/www/mobile.html");
+        setContentView(R.layout.activity_main);
+        amountView = findViewById(R.id.amount);
+        noteView = findViewById(R.id.note);
+        nameView = findViewById(R.id.payee_name);
+        vpaView = findViewById(R.id.payee_vpa);
+        statusView = findViewById(R.id.status);
+        paymentLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                this::onPaymentResult);
+        findViewById(R.id.fill_sample).setOnClickListener(view -> fillSample());
+        findViewById(R.id.pay_gpay).setOnClickListener(view -> pay(UpiRequest.GOOGLE_PAY));
+        findViewById(R.id.pay_phonepe).setOnClickListener(view -> pay(UpiRequest.PHONEPE));
     }
 
-    private final class UpiBridge {
-        @JavascriptInterface
-        public void launch(String target, String url) {
-            runOnUiThread(() -> openUpiApp(target, url));
+    private void fillSample() {
+        amountView.setText("149.00");
+        noteView.setText("Groceries");
+        nameView.setText("Sample Store");
+        vpaView.setText("samplemerchant@upi");
+        statusView.setText("Sample details are filled. Choose Google Pay or PhonePe.");
+    }
+
+    private void pay(String packageName) {
+        try {
+            String amount = UpiRequest.normalizeAmount(text(amountView));
+            String note = text(noteView);
+            String name = text(nameView);
+            String vpa = text(vpaView);
+            UpiRequest.checkPayee(name, vpa, note);
+            String url = UpiRequest.payUrl(vpa, name, amount, note, transactionRef());
+            if (!url.startsWith("upi://pay?")) {
+                statusView.setText("This payment link is not a UPI request.");
+                return;
+            }
+            Intent pay = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            pay.setPackage(packageName);
+            if (pay.resolveActivity(getPackageManager()) == null) {
+                statusView.setText("Install " + UpiRequest.appName(packageName) + " to approve this payment.");
+                return;
+            }
+            statusView.setText("Opening " + UpiRequest.appName(packageName) + "…");
+            paymentLauncher.launch(pay);
+        } catch (IllegalArgumentException error) {
+            statusView.setText(error.getMessage());
+        } catch (ActivityNotFoundException error) {
+            statusView.setText("Install " + UpiRequest.appName(packageName) + " to approve this payment.");
         }
     }
 
-    private void openUpiApp(String target, String url) {
-        if (url == null || !url.startsWith("upi://pay?")) {
-            Toast.makeText(this, "This payment link is not a UPI request.", Toast.LENGTH_LONG).show();
+    private void onPaymentResult(androidx.activity.result.ActivityResult result) {
+        Intent data = result.getData();
+        String raw = null;
+        if (data != null) {
+            raw = data.getStringExtra("response");
+            if ((raw == null || raw.isBlank()) && data.getData() != null) {
+                raw = data.getData().toString();
+            }
+        }
+        if (raw == null || raw.isBlank()) {
+            statusView.setText("Google Pay or PhonePe closed before sending a payment result.");
             return;
         }
-        Intent pay = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        if ("googlePay".equals(target)) {
-            pay.setPackage(GOOGLE_PAY);
-        } else if ("phonePe".equals(target)) {
-            pay.setPackage(PHONEPE);
-        }
-        try {
-            if ("any".equals(target)) {
-                startActivity(Intent.createChooser(pay, "Pay with UPI"));
-            } else {
-                startActivity(pay);
-            }
-        } catch (ActivityNotFoundException error) {
-            String name = "phonePe".equals(target) ? "PhonePe" : "googlePay".equals(target) ? "Google Pay" : "a UPI app";
-            Toast.makeText(this, "Install " + name + " to approve this payment.", Toast.LENGTH_LONG).show();
-        }
+        statusView.setText(UpiRequest.responseSummary(raw));
+    }
+
+    private static String text(EditText field) {
+        return field.getText() == null ? "" : field.getText().toString();
+    }
+
+    private static String transactionRef() {
+        String time = Long.toString(System.currentTimeMillis(), 36).toUpperCase();
+        String suffix = Integer.toString(new SecureRandom().nextInt(36 * 36 * 36 * 36), 36).toUpperCase();
+        return ("T" + time + suffix).replaceAll("[^A-Z0-9]", "");
     }
 }

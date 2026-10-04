@@ -48,18 +48,16 @@ PUBLIC_BASE_URL=https://your-public-host
 
 ## Android app
 
-The Android app is the same checkout, installed on the phone. Google Pay and PhonePe are opened with an Android view intent for `upi://pay`, aimed at the official package when you pick that app.
+UPI Checkout is a native Android app. It sends the payment into Google Pay or PhonePe and shows Paid or Failed when that app returns.
 
 ```bash
-npm install
-npm run build:mobile
 cd android
-./gradlew assembleDebug
+./gradlew test assembleDebug
 ```
 
-A debug-signed package is already built at `dist/upi-checkout.apk`. Copy that file to an Android phone and open it, or install it with `adb install -r dist/upi-checkout.apk`. The phone must allow install from this source. Rebuilding from source writes `android/app/build/outputs/apk/debug/app-debug.apk`.
+Install `dist/upi-checkout.apk` on an Android phone (`adb install -r dist/upi-checkout.apk`). Enter your UPI ID and amount, then tap Open Google Pay or Open PhonePe. The customer approves the transfer inside that app.
 
-Play Store and App Store listing needs a developer account for that store. This repository builds the sideload package; it does not submit the app to a store.
+Play Store listing needs a Google Play Console account. This repository builds the installable package.
 
 ## Tests
 

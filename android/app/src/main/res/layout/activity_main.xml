@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F6F3EE"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="India UPI"
+            android:textAllCaps="true"
+            android:textColor="#1F6B45"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="6dp"
+            android:text="Pay with Google Pay or PhonePe"
+            android:textColor="#1C1915"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingBottom="16dp"
+            android:text="This app sends the payment into Google Pay or PhonePe. Approve it there. This app never asks for your UPI PIN."
+            android:textColor="#5E584F"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Amount (INR)"
+            android:textColor="#1C1915"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/amount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="149.00"
+            android:importantForAutofill="no"
+            android:inputType="numberDecimal"
+            android:minHeight="48dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:text="Note"
+            android:textColor="#1C1915"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/note"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Groceries"
+            android:inputType="text"
+            android:maxLength="80"
+            android:minHeight="48dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:text="Payee name"
+            android:textColor="#1C1915"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/payee_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Sample Store"
+            android:inputType="textPersonName"
+            android:maxLength="50"
+            android:minHeight="48dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:text="Payee UPI ID"
+            android:textColor="#1C1915"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/payee_vpa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="shopname@okhdfcbank"
+            android:inputType="textEmailAddress"
+            android:minHeight="48dp" />
+
+        <Button
+            android:id="@+id/fill_sample"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Fill sample" />
+
+        <Button
+            android:id="@+id/pay_gpay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="#1C1915"
+            android:text="Open Google Pay"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/pay_phonepe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="#5F259F"
+            android:text="Open PhonePe"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:text="Enter the amount and your UPI ID, then choose an app."
+            android:textColor="#1C1915"
+            android:textSize="16sp" />
+    </LinearLayout>
+</ScrollView>
