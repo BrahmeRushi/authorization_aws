@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { once } from "node:events";
 import { describe, it } from "node:test";
 import { GOOGLE_PAY_PACKAGE, PHONEPE_PACKAGE } from "../src/upi.js";
-import { createApp } from "../src/server.js";
+import { createApp, listen } from "../src/server.js";
 
 async function withServer(options, run) {
   const server = createApp({ phonepe: false, ...options });
@@ -18,6 +18,21 @@ async function withServer(options, run) {
 }
 
 describe("checkout server", () => {
+  it("answers localhost on both IPv6 and IPv4", async () => {
+    const server = createApp({ phonepe: false });
+    const address = await listen(server, 0);
+    try {
+      const v6 = await fetch(`http://[::1]:${address.port}/api/health`);
+      const v4 = await fetch(`http://127.0.0.1:${address.port}/api/health`);
+      assert.equal(v6.status, 200);
+      assert.equal(v4.status, 200);
+      assert.deepEqual(await v6.json(), { ok: true });
+    } finally {
+      server.close();
+      await once(server, "close");
+    }
+  });
+
   it("creates a Google Pay and PhonePe payment request", async () => {
     await withServer({}, async (base) => {
       const page = await fetch(`${base}/`);

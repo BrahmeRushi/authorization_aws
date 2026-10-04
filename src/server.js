@@ -284,11 +284,22 @@ export function createApp({
   });
 }
 
-function listen(server, port) {
+export function listen(server, port) {
   return new Promise((resolve, reject) => {
-    server.once("error", reject);
-    server.listen(port, "0.0.0.0", () => {
-      server.off("error", reject);
+    const onError = (error) => {
+      if (error.code !== "EAFNOSUPPORT" && error.code !== "EADDRNOTAVAIL") {
+        reject(error);
+        return;
+      }
+      server.once("error", reject);
+      server.listen(port, "0.0.0.0", () => {
+        server.off("error", reject);
+        resolve(server.address());
+      });
+    };
+    server.once("error", onError);
+    server.listen({ port, host: "::", ipv6Only: false }, () => {
+      server.off("error", onError);
       resolve(server.address());
     });
   });
@@ -301,6 +312,6 @@ if (isMain) {
   const port = Number(process.env.PORT || 3000);
   const server = createApp();
   listen(server, port).then((address) => {
-    console.log(`UPI checkout listening on http://0.0.0.0:${address.port}`);
+    console.log(`UPI checkout listening on http://localhost:${address.port}`);
   });
 }
