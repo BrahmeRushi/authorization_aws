@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pay with Google Pay or PhonePe</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="top">
+      <p class="eyebrow">India UPI</p>
+      <h1>Pay with Google Pay or PhonePe</h1>
+      <p class="lede">
+        This checkout builds a standard UPI payment request. Google Pay and PhonePe
+        open it on your phone. The UPI PIN stays inside those apps.
+      </p>
+    </header>
+
+    <main>
+      <section class="card" id="checkout-card">
+        <form id="pay-form">
+          <label>
+            Amount (INR)
+            <input id="amount" name="amount" inputmode="decimal" autocomplete="off" placeholder="149.00" required />
+          </label>
+          <label>
+            Note
+            <input id="note" name="note" maxlength="80" autocomplete="off" placeholder="Groceries" />
+          </label>
+          <label>
+            Payee name
+            <input id="payee-name" name="payeeName" maxlength="50" autocomplete="organization" placeholder="Sample Store" required />
+          </label>
+          <label>
+            Payee UPI ID
+            <input id="payee-vpa" name="payeeVpa" autocapitalize="off" autocomplete="off" spellcheck="false" placeholder="shopname@okhdfcbank" required />
+          </label>
+          <label>
+            Merchant category code
+            <input id="merchant-code" name="merchantCode" inputmode="numeric" maxlength="4" placeholder="Optional, 4 digits" />
+          </label>
+          <div class="actions">
+            <button type="button" class="ghost" id="fill-sample">Fill sample</button>
+            <button type="submit" id="create-payment">Create payment request</button>
+          </div>
+          <p class="form-error" id="form-error" hidden></p>
+        </form>
+      </section>
+
+      <section class="card result" id="result" hidden>
+        <div class="result-head">
+          <div>
+            <p class="eyebrow">Payment request</p>
+            <p class="amount" id="result-amount"></p>
+            <p class="meta" id="result-payee"></p>
+          </div>
+          <p class="status" id="result-status"></p>
+        </div>
+        <div class="pay-buttons">
+          <a class="pay gpay" id="gpay-link" href="#">Open Google Pay</a>
+          <a class="pay phonepe" id="phonepe-link" href="#">Open PhonePe</a>
+          <a class="pay any" id="upi-link" href="#">Any UPI app</a>
+        </div>
+        <a class="pay phonepe hosted" id="phonepe-hosted" href="#" hidden>Continue on PhonePe checkout</a>
+        <p class="hint" id="device-hint"></p>
+        <p class="hint error" id="phonepe-error" hidden></p>
+        <div class="qr-row">
+          <img id="qr" alt="UPI QR code for Google Pay or PhonePe" width="280" height="280" />
+          <div>
+            <h2>Scan with either app</h2>
+            <p>The QR code is the same payment. Google Pay and PhonePe both read it.</p>
+            <dl>
+              <div><dt>Reference</dt><dd id="result-ref"></dd></div>
+              <div><dt>Note</dt><dd id="result-note"></dd></div>
+            </dl>
+            <p class="upi-label">UPI link</p>
+            <code id="upi-text"></code>
+          </div>
+        </div>
+        <p class="fine" id="status-note"></p>
+      </section>
+    </main>
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>

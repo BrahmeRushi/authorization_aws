@@ -1,0 +1,17 @@
+{
+  "name": "authorization-aws",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Create India UPI payment requests that open in Google Pay or PhonePe.",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "qrcode": "^1.5.4"
+  }
+}
