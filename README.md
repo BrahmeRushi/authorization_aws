@@ -46,6 +46,19 @@ PUBLIC_BASE_URL=https://your-public-host
 
 `PUBLIC_BASE_URL` must be an address PhonePe can redirect the customer back to. Without these values, Google Pay and PhonePe still open through UPI intent and QR.
 
+## Android app
+
+UPI Checkout is a native Android app. It sends the payment into Google Pay or PhonePe and shows Paid or Failed when that app returns.
+
+```bash
+cd android
+./gradlew test assembleDebug
+```
+
+Install `dist/upi-checkout.apk` on an Android phone (`adb install -r dist/upi-checkout.apk`). Enter your UPI ID and amount, then tap Open Google Pay or Open PhonePe. The customer approves the transfer inside that app.
+
+Play Store listing needs a Google Play Console account. This repository builds the installable package.
+
 ## Tests
 
 ```bash
