@@ -46,6 +46,21 @@ PUBLIC_BASE_URL=https://your-public-host
 
 `PUBLIC_BASE_URL` must be an address PhonePe can redirect the customer back to. Without these values, Google Pay and PhonePe still open through UPI intent and QR.
 
+## Android app
+
+The Android app is the same checkout, installed on the phone. Google Pay and PhonePe are opened with an Android view intent for `upi://pay`, aimed at the official package when you pick that app.
+
+```bash
+npm install
+npm run build:mobile
+cd android
+./gradlew assembleDebug
+```
+
+A debug-signed package is already built at `dist/upi-checkout.apk`. Copy that file to an Android phone and open it, or install it with `adb install -r dist/upi-checkout.apk`. The phone must allow install from this source. Rebuilding from source writes `android/app/build/outputs/apk/debug/app-debug.apk`.
+
+Play Store and App Store listing needs a developer account for that store. This repository builds the sideload package; it does not submit the app to a store.
+
 ## Tests
 
 ```bash

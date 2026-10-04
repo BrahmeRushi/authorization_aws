@@ -6,6 +6,7 @@
   "description": "Create India UPI payment requests that open in Google Pay or PhonePe.",
   "scripts": {
     "start": "node src/server.js",
+    "build:mobile": "node scripts/build-mobile.mjs",
     "test": "node --test"
   },
   "engines": {
@@ -13,5 +14,8 @@
   },
   "dependencies": {
     "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.10"
   }
 }
